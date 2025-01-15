@@ -12,7 +12,6 @@
 
 .panel {
     display: flex;
-    flex-direction: row;
     justify-content: center;
     width: 25%;
     background-color: rgb(228, 228, 228);
@@ -43,17 +42,21 @@
 }
 
 .dropdown-button {
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
+    background-color: white;
+    color: black;
+    font-weight: bold;
+    border: 2px solid orange;
+    border-radius: 5px;
     padding: 10px;
     cursor: pointer;
+    width: 100%;
 }
 
 .dropdown-content {
     display: none;
     position: absolute;
     background-color: #fff;
-    min-width: 150px;
+    min-width: 100%;
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
     z-index: 1;
 }
