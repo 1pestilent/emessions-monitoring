@@ -6,8 +6,11 @@
     <title>Two-Level Header</title>
     <link rel="stylesheet" href="styles/header.css">
     <link rel="stylesheet" href="styles/graph.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body style="font-family:  'PT Sans', sans-serif;">
     <header class="header">
         <div class="top-header">
             <div class="logo"><a href="">Мониторинг выброса вредных веществ</a></div>
@@ -33,17 +36,22 @@
             </div>
             <div class="panel">
                 <div class="panel-elements">
-                    <div class="period">
-                        <div class="dropdown">
-                            <button class="dropdown-button">Выбрать</button>
-                            <div class="dropdown-content">
-                                <a href="#">За день</a>
-                                <a href="#">За неделю</a>
-                                <a href="#">За месяц</a>
+                    <div>
+                        <div class="select js-select">
+                            <input type="text" class="select__input js-select-input" placeholder="Выберите период" disabled>
+                            <img src="icons/dropdown_black.svg" class="select__chevron js-select-chevron">
+                            <div class="select__dropdown js-select-dropdown">
+                                <div class="select__item js-select-item" data-value="За день">За день</div>
+                                <div class="select__item js-select-item" data-value="За неделю">За неделю</div>
+                                <div class="select__item js-select-item" data-value="За месяц">За месяц</div>
                             </div>
                         </div>
                     </div>
-                    <button style="margin: 5%; padding: 2%;">Применить</button>
+                    <div>
+                        <button class="commit-btn">
+                            Показать
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
