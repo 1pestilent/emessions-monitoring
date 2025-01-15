@@ -51,11 +51,18 @@
 .select__input::placeholder {
     color: grey;
 }
+.chevron__transform{
+    transform: rotate(180deg);
+}
+    
+
+
 .select__chevron {
     position: absolute;
     top: 15px;
     left: 80%;
     cursor: pointer;
+    transition: .6s ease-in-out;
 }
 
 .select__dropdown {

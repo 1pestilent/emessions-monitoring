@@ -22,15 +22,19 @@ window.addEventListener("load", () => {
     window.addEventListener("mouseup", (e) => {
         if (!e.target.closest(".js-select")) {
             const allSelectors = document.querySelectorAll(".js-select-dropdown");
-            allSelectors.forEach(select => select.classList.remove("expanded"))
+            allSelectors.forEach(select => select.classList.remove("expanded"));
+            const allChevrons = document.querySelectorAll(".js-select-chevron");
+            allChevrons.forEach(chevron => chevron.classList.remove("chevron__transform"));
             return;
         } else {
-            const container = e.target.closest(".js-select")
-            const dropdown = container.querySelector(".js-select-dropdown")
+            const container = e.target.closest(".js-select");
+            const dropdown = container.querySelector(".js-select-dropdown");
+            const chevron = container.querySelector(".js-select-chevron");
+            chevron.classList.toggle("chevron__transform")
             dropdown.classList.toggle("expanded");
         }
     });
-    
+
     window.addEventListener("mouseup", (e) => {
         if (!e.target.closest(".js-select-item")) return;
         const container = e.target.closest(".js-select");
