@@ -36,7 +36,7 @@
 .select {
     margin: 5%;
     position: relative;
-    width: 100%;
+    width: 90%;
 }
 
 .select__input {
@@ -44,7 +44,7 @@
     background-color: white;
     border-radius: 8px;
     border: 1px solid black;
-    width: 90%;
+    width: 100%;
     user-select: none;
     color: black;
 }
@@ -54,15 +54,12 @@
 .chevron__transform{
     transform: rotate(180deg);
 }
-    
-
-
 .select__chevron {
     position: absolute;
     top: 15px;
-    left: 80%;
+    left: 85%;
     cursor: pointer;
-    transition: .6s ease-in-out;
+    transition: .4s ease-in-out;
 }
 
 .select__dropdown {
@@ -70,7 +67,7 @@
     position: absolute;
     top: 60px;
     left: 0;
-    width: 90%;
+    width: 100%;
     background-color: white;
     border-radius: 8px;
     border: 1px solid black;

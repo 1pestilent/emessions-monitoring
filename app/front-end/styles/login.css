@@ -1,0 +1,18 @@
+*{
+	font-family: 'PT Sans';
+}
+body{
+    background: white(52, 56, 61);
+}
+
+.auth-win {
+	display: flex;
+	justify-self: center;
+	margin-top: 15%;
+}
+
+.auth-win-under{
+	justify-content: center;
+	padding: 30%;
+	background-color: grey;
+}
