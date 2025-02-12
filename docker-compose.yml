@@ -11,11 +11,3 @@ services:
       - ./postgres_data:/var/lib/postgresql/data
     ports:
       - "${DB_PORT}:5432"
-  web:
-    container_name: back
-    image: backend:v1.2
-    restart: always
-    ports:
-      - "8000:8000"
-    depends_on:
-      - db

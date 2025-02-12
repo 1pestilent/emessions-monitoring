@@ -1,0 +1,10 @@
+.env
+/.venv
+/certs
+/postgres_data
+**/__pycache__
+__pycache__/
+/__pycache__
+*.py[cod]
+*.pyc
+__pycache__/
