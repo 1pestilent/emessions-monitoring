@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 
 from app.core.config import PUBLIC_KEY_PATH, PRIVATE_KEY_PATH, TOKEN_TYPE_FIELD, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 
+
 def hash_password(password: str) -> bytes:
     salt = bcrypt.gensalt()
     pwd_bytes: bytes = password.encode()
@@ -12,6 +13,7 @@ def hash_password(password: str) -> bytes:
 
 def verify_password(password: str, hashed_password: bytes) -> bool:
     return bcrypt.checkpw(password=password.encode(), hashed_password=hashed_password)
+
 
 def encode_jwt(
         token_type: str,
@@ -37,6 +39,7 @@ def encode_jwt(
 
     encoded = jwt.encode(to_encode, PRIVATE_KEY_PATH.read_text(), ALGORITHM)
     return encoded
+
 
 def decode_jwt(token: str | bytes) -> dict:
 

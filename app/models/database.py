@@ -1,8 +1,12 @@
 from sqlalchemy.ext.asyncio import AsyncSession, AsyncAttrs, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
+from fastapi import Depends
+from typing import Annotated
+
 from app.core.config import DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT
 
 engine = create_async_engine(f"postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
+
 
 new_session = sessionmaker(
     engine,
@@ -25,3 +29,6 @@ async def setup_database():
         await con.run_sync(Base.metadata.create_all)
 
     return {"Status": True, "Text": "База успешно создана!"}
+
+
+session_dependency = Annotated[AsyncSession, Depends(get_session)]
