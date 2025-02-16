@@ -4,8 +4,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.database import session_dependency
 from app.models.users import UserModel
-from app.users.schemas import UserSchema, UserAddSchema
+from app.users.schemas import SafelyUserSchema, UserSchema, UserAddSchema
 from app.core.security import hash_password
+
+def return_safe_user(user: UserSchema) -> SafelyUserSchema:
+    safe_user_data = user.model_dump(exclude={"password"})
+    safe_user = SafelyUserSchema(**safe_user_data)
+    return safe_user
 
 async def get_user(
         session: session_dependency,
@@ -47,4 +52,15 @@ async def user_is_uniq(
         username: str,
         email: str,
 ):
-    ...
+    username_result = await session.execute(select(UserModel).where(UserModel.username == username))
+    email_result = await session.execute(select(UserModel).where(UserModel.email == email))
+
+    if username_result.scalars().first() or email_result.scalars().first() is not None:
+        raise HTTPException(
+            status.HTTP_409_CONFLICT,
+            detail='Username or email is already busy!',
+            headers={"WWW-Authenticate": "Bearer"},
+            )
+    else:
+        return True
+    

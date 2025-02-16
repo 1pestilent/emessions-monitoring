@@ -8,10 +8,10 @@ async def access_token(user: UserSchema,
                             expire_timedelta: int | None = None
                             ) -> str:
     payload = {
-        "id": user.telegram_id,
-        "username": user.fullname,
+        "sub": user.username,
+        "fullname": user.last_name + user.first_name,
         }
-    return await encode_jwt(
+    return encode_jwt(
          token_type=ACCESS_TOKEN_TYPE,
          payload=payload,
          expire_timedelta= expire_timedelta
@@ -21,9 +21,9 @@ async def refresh_token(user: UserSchema,
     expire_timedelta: int | None = None
     ) -> str:
     payload = {
-        "id": user.telegram_id,
+        "sub": user.username,
         }
-    return await encode_jwt(
+    return encode_jwt(
          token_type=REFRESH_TOKEN_TYPE,
          payload=payload,
          expire_timedelta= timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
