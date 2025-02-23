@@ -28,7 +28,7 @@ async def authenticate_user(
     return return_safe_user(user)
 
 def get_token_payload(
-        token: Annotated[str, oauth2_schemem]
+        token: Annotated[str, Depends(oauth2_schemem)]
         ) -> dict:
     try: 
         payload = security.decode_jwt(token)
@@ -48,7 +48,7 @@ def validate_token_type(
         return True
     raise HTTPException(
         status.HTTP_401_UNAUTHORIZED,
-        detail=f'Invalid token type {current_token_type!r} expected {token_type!r}\n{payload}'
+        detail=f'Invalid token type {current_token_type!r} expected {token_type!r}'
     )
 
 async def get_user_from_payload(
