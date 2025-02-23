@@ -32,7 +32,7 @@ def encode_jwt(
         expire = now + timedelta(minutes=expire_minutes)
 
     to_encode.update(
-        TOKEN_TYPE_FIELD = token_type,
+        type = token_type,
         iat = now,
         exp = expire
         )

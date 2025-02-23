@@ -9,7 +9,8 @@ async def access_token(user: UserSchema,
                             ) -> str:
     payload = {
         "sub": user.username,
-        "fullname": user.last_name + user.first_name,
+        "active": user.is_active,
+        "fullname": f'{user.last_name} {user.first_name}',
         }
     return encode_jwt(
          token_type=ACCESS_TOKEN_TYPE,
