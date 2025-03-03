@@ -1,6 +1,6 @@
 from fastapi import Form
 from pydantic import BaseModel
-from typing_extensions import Annotated, Doc
+from typing_extensions import Annotated
 
 class UserLoginForm:
     def __init__(

@@ -1,5 +1,6 @@
 from sqlalchemy import ForeignKey, String, Text, Float, DateTime, text
 from sqlalchemy.orm import Mapped, mapped_column
+from datetime import datetime
 
 from app.models.database import Base
 
@@ -23,9 +24,9 @@ class SensorModel(Base):
     name: Mapped[str] = mapped_column(String(127), nullable=False)
     serial_number: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     unit_id: Mapped[int] = mapped_column(ForeignKey('units.id', ondelete='RESTRICT'))
-    installation_date: Mapped[DateTime]
-    calibration_date:  Mapped[DateTime]
-    description: Mapped[Text]
+    installation_date: Mapped[DateTime] = mapped_column(DateTime)
+    calibration_date:  Mapped[DateTime] = mapped_column(DateTime)
+    description: Mapped[Text] = mapped_column(Text)
     status: Mapped[int] = mapped_column(ForeignKey('status.id', ondelete='RESTRICT'))
 
 class SensorReadingsModel(Base):
@@ -34,14 +35,14 @@ class SensorReadingsModel(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     sensor_id: Mapped[int] = mapped_column(ForeignKey('sensors.id', ondelete='RESTRICT'))
     value: Mapped[float] = mapped_column(Float)
-    timestamp: Mapped[DateTime]
+    timestamp: Mapped[DateTime] = mapped_column(DateTime)
 
 class LocationModel(Base):
     __tablename__ = 'locations'
     
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(127), nullable=False, unique=True)
-    description: Mapped[Text]
+    description: Mapped[Text] = mapped_column(Text)
 
 class SensorMappingModel(Base):
     __tablename__ = 'sensors_mapping'
