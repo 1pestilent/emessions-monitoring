@@ -17,6 +17,14 @@ class UnitModel(Base):
     name: Mapped[str] = mapped_column(String(63), nullable=False, unique=True)
     symbol: Mapped[str] = mapped_column(String(15), nullable=False, unique=True)
 
+class SubstanceModel(Base):
+    __tablename__ = 'substances'
+
+    id: Mapped[int] = mapped_column(primary_key=True) 
+    name: Mapped[str] = mapped_column(String(15), nullable=False, unique=True)
+    unit: Mapped[int] = mapped_column(ForeignKey('units.id', ondelete='RESTRICT'))
+    mpc: Mapped[float] = mapped_column(Float, nullable=True)
+    
 class SensorModel(Base):
     __tablename__ = 'sensors'
 
@@ -35,6 +43,7 @@ class SensorReadingsModel(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     sensor_id: Mapped[int] = mapped_column(ForeignKey('sensors.id', ondelete='RESTRICT'))
     value: Mapped[float] = mapped_column(Float)
+    unit: Mapped[int] = mapped_column(ForeignKey('units.id', ondelete='RESTRICT'))
     timestamp: Mapped[DateTime] = mapped_column(DateTime)
 
 class LocationModel(Base):
