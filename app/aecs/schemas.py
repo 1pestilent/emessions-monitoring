@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict
-from typing import List
+from typing import List, Optional
 
 class StatusSchema(BaseModel):
     model_config = ConfigDict(strict=True, from_attributes=True)
@@ -33,8 +33,8 @@ class SubstanceSchema(BaseModel):
 
     id: int
     name: str
-    unit: str
-    mpc: float
+    unit_symbol: str
+    mpc: float | None
 
 class SubstanceListSchema(BaseModel):
     substances: List[SubstanceSchema]
