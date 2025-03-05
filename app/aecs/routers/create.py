@@ -11,6 +11,32 @@ router = APIRouter(prefix="/aecs/create",tags=["CREATE"])
 async def setup_db():
     return await setup_database()
 
+@router.get('/all')
+async def create_all(
+    session: session_dependency,
+):
+    responses = []
+    
+    try:
+        status_response = await create_statuses(session)
+        responses.append(status_response)
+    except HTTPException as e:
+        responses.append({"status_code": e.status_code, "detail": e.detail})
+    
+    try:
+        units_response = await create_units(session)
+        responses.append(units_response)
+    except HTTPException as e:
+        responses.append({"status_code": e.status_code, "detail": e.detail})
+    
+    try:
+        substances_response = await create_substances(session)
+        responses.append(substances_response)
+    except HTTPException as e:
+        responses.append({"status_code": e.status_code, "detail": e.detail})
+    
+    return responses
+
 @router.get('/statuses')
 async def create_statuses(
     session: session_dependency,

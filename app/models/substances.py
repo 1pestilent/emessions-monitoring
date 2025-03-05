@@ -32,10 +32,10 @@ class SensorModel(Base):
     name: Mapped[str] = mapped_column(String(127), nullable=False)
     serial_number: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     unit_id: Mapped[int] = mapped_column(ForeignKey('units.id', ondelete='RESTRICT'))
-    installation_date: Mapped[DateTime] = mapped_column(DateTime)
-    calibration_date:  Mapped[DateTime] = mapped_column(DateTime)
+    installation_date: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    calibration_date:  Mapped[DateTime] = mapped_column(DateTime, nullable=False)
     description: Mapped[Text] = mapped_column(Text)
-    status: Mapped[int] = mapped_column(ForeignKey('status.id', ondelete='RESTRICT'))
+    status: Mapped[int] = mapped_column(ForeignKey('status.id', ondelete='RESTRICT'), default = 1)
 
 class SensorReadingsModel(Base):
     __tablename__ = 'readings'
@@ -43,7 +43,6 @@ class SensorReadingsModel(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     sensor_id: Mapped[int] = mapped_column(ForeignKey('sensors.id', ondelete='RESTRICT'))
     value: Mapped[float] = mapped_column(Float)
-    unit: Mapped[int] = mapped_column(ForeignKey('units.id', ondelete='RESTRICT'))
     timestamp: Mapped[DateTime] = mapped_column(DateTime)
 
 class LocationModel(Base):

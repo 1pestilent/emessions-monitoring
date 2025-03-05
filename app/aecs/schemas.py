@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 from typing import List, Optional
+from datetime import datetime
 
 class StatusSchema(BaseModel):
     model_config = ConfigDict(strict=True, from_attributes=True)
@@ -38,3 +39,30 @@ class SubstanceSchema(BaseModel):
 
 class SubstanceListSchema(BaseModel):
     substances: List[SubstanceSchema]
+
+class AddSensorSchema(BaseModel):
+    name: str
+    serial_number: str
+    unit_id: int
+    description: str | None
+    status: int
+
+class InstallationSensorSchema(BaseModel):
+    id: str | None 
+    serial_number: str | None
+    installation_date: datetime
+
+class CalibrationSensorSchema(BaseModel):
+    id: str | None 
+    serial_number: str | None
+    calibration_date: datetime
+
+class SensorSchema():
+    id: str
+    name: str
+    serial_number: str
+    unit_id: str
+    installation_date: datetime
+    calibration_date: datetime
+    description: str
+    status: str
