@@ -9,14 +9,28 @@ router = APIRouter(prefix="/sensor",tags=["Sensor"])
 async def get_sensor_by_id(
     session: session_dependency,
     id: int,
-) -> schemas.SensorSchema:
-    ...
+):
+    pass
 
 @router.post('/create')
 async def create_sensor(
     session: session_dependency,
-    data: schemas.AddSensorSchema
+    data: schemas.AddSensorSchema,
+):
+    ...
+
+@router.post('/delete/{id}')
+async def create_sensor(
+    session: session_dependency,
+    id: int
     ):
+    ...
+
+@router.put('/change')
+async def change_sensor(
+    session: session_dependency,
+    data: schemas.AddSensorSchema,
+):
     ...
 
 @router.post('/calibration')
