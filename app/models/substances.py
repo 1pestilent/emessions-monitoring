@@ -32,8 +32,8 @@ class SensorModel(Base):
     name: Mapped[str] = mapped_column(String(127), nullable=False)
     serial_number: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     unit_id: Mapped[int] = mapped_column(ForeignKey('units.id', ondelete='RESTRICT'))
-    installation_date: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
-    calibration_date:  Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    installation_date: Mapped[DateTime] = mapped_column(DateTime, nullable=True)
+    calibration_date:  Mapped[DateTime] = mapped_column(DateTime, nullable=True)
     description: Mapped[Text] = mapped_column(Text)
     status: Mapped[int] = mapped_column(ForeignKey('status.id', ondelete='RESTRICT'), default = 1)
 

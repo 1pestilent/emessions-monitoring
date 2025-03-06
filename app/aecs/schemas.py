@@ -57,12 +57,14 @@ class CalibrationSensorSchema(BaseModel):
     serial_number: str | None
     calibration_date: datetime
 
-class SensorSchema():
-    id: str
+class SensorSchema(BaseModel):
+    model_config = ConfigDict(strict=True, from_attributes=True)
+
+    id: int
     name: str
     serial_number: str
-    unit_id: str
-    installation_date: datetime
-    calibration_date: datetime
+    unit_symbol: str
+    installation_date: datetime | None = None
+    calibration_date: datetime | None = None
     description: str
-    status: str
+    status_name: str
