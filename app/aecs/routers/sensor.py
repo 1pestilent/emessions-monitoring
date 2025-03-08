@@ -9,6 +9,39 @@ from app.models.database import session_dependency
 
 router = APIRouter(prefix="/sensor",tags=["Sensor"])
 
+@router.post('/create')
+async def create_sensor(
+    session: session_dependency,
+    data: Annotated[schemas.AddSensorSchema, Form()],
+
+):
+    query = select(SensorModel).where(SensorModel.serial_number == data.serial_number)
+    result = await session.execute(query)
+    result = result.all()
+
+    if result:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'Sensor with {data.serial_number!r} serial number already exists')
+    
+    try: 
+        sensor = SensorModel(
+            name=data.name,
+            serial_number=data.serial_number,
+            unit_id=data.unit_id,
+            description=data.description,
+            status=data.status
+        )
+
+        session.add(sensor)
+        await session.commit()
+        await session.refresh(sensor)
+
+        return {"message": "Sensor created successfully", "sensor_id": sensor.id}
+    
+    except IntegrityError as e:
+
+        await session.rollback()
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'Error: {e!r}')
+
 @router.get('/all')
 async def get_sensors(
     session: session_dependency
@@ -125,36 +158,3 @@ async def calibration_sensor(
     data: schemas.CalibrationSensorSchema,
 ):
     ...
-
-@router.post('/create')
-async def create_sensor(
-    session: session_dependency,
-    data: Annotated[schemas.AddSensorSchema, Form()],
-
-):
-    query = select(SensorModel).where(SensorModel.serial_number == data.serial_number)
-    result = await session.execute(query)
-    result = result.all()
-
-    if result:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'Sensor with {data.serial_number!r} serial number already exists')
-    
-    try: 
-        sensor = SensorModel(
-            name=data.name,
-            serial_number=data.serial_number,
-            unit_id=data.unit_id,
-            description=data.description,
-            status=data.status
-        )
-
-        session.add(sensor)
-        await session.commit()
-        await session.refresh(sensor)
-
-        return {"message": "Sensor created successfully", "sensor_id": sensor.id}
-    
-    except IntegrityError as e:
-
-        await session.rollback()
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'Error: {e!r}')
