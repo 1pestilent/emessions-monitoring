@@ -68,3 +68,6 @@ class SensorSchema(BaseModel):
     calibration_date: datetime | None = None
     description: str
     status_name: str
+
+class SensorListSchema(BaseModel):
+    sensors: List[SensorSchema]
