@@ -47,14 +47,23 @@ class AddSensorSchema(BaseModel):
     description: str | None
     status: int
 
+class ChangeSensorSchema(BaseModel):
+    model_config = ConfigDict()
+
+    name: Optional[str] = None
+    serial_number: Optional[str] = None
+    unit_id: Optional[int] = None
+    description: Optional[str] = None
+    status: Optional[int] = None
+
 class InstallationSensorSchema(BaseModel):
-    id: str | None 
-    serial_number: str | None
+    id: Optional[str] = None
+    serial_number: Optional[str] = None
     installation_date: datetime
 
 class CalibrationSensorSchema(BaseModel):
-    id: str | None 
-    serial_number: str | None
+    id: Optional[str] = None
+    serial_number: Optional[str] = None
     calibration_date: datetime
 
 class SensorSchema(BaseModel):

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, Form, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import select, asc
 from sqlalchemy.exc import IntegrityError
 from typing import Annotated
 
@@ -57,6 +57,7 @@ async def get_sensors(
     )
     .join(UnitModel)
     .join(StatusModel)
+    .order_by(asc(SensorModel.id))
     )
 
     results = await session.execute(query)
@@ -141,20 +142,58 @@ async def delete_sensor_by_id(
 @router.put('/change')
 async def change_sensor(
     session: session_dependency,
-    data: schemas.AddSensorSchema,
+    data: Annotated[schemas.ChangeSensorSchema, Form()],
+    sensor_id: int,
 ):
-    ...
+    query = select(SensorModel).where(SensorModel.id == sensor_id)
+    result = await session.execute(query)
+    sensor = result.scalars().first()
+
+    if not sensor:
+        raise HTTPException(status_code=404, detail="Sensor does not exist")
+    
+    if data.name:
+        sensor.name = data.name
+    if data.serial_number:
+        sensor.serial_number = data.serial_number
+    if data.unit_id:
+        sensor.unit_id = data.unit_id
+    if data.description:
+        sensor.description = data.description
+    if data.status:
+        sensor.status = data.status
+    
+    await session.commit()
+    await session.refresh(sensor)
+    
+    return sensor
+
 
 @router.post('/installation')
 async def installation_sensor(
     session: session_dependency,
-    data: schemas.InstallationSensorSchema,
-):
+    data: Annotated[schemas.InstallationSensorSchema, Form()],
+    sensor_id: int,
+):  
+    if data.id:
+        query = select(SensorModel).where(SensorModel.id == sensor_id)
+        result = await session.execute(query)
+        sensor = result.scalars().first()
+
+        if not sensor:
+            raise HTTPException(status_code=404, detail="Sensor does not exist")
+    else:
+        query = select(SensorModel).where(SensorModel.serial_number == data.serial_number)
+        result = await session.execute(query)
+        sensor = result.scalars().first()
+
+        if not sensor:
+            raise HTTPException(status_code=404, detail="Sensor does not exist")
     ...
     
 @router.post('/calibration')
 async def calibration_sensor(
     session: session_dependency,
-    data: schemas.CalibrationSensorSchema,
+    data: Annotated[schemas.CalibrationSensorSchema, Form()],
 ):
     ...
