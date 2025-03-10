@@ -22,7 +22,7 @@ class Base(AsyncAttrs, DeclarativeBase):
     pass
 
 async def setup_database():
-    from app.models import users, substances
+    from app.models import users
 
     async with engine.begin() as con:
         await con.run_sync(Base.metadata.drop_all)

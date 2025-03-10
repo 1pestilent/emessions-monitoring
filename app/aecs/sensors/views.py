@@ -5,18 +5,13 @@ from typing import Annotated, Optional
 from datetime import datetime
 
 from app.aecs.sensors import utils
-from app.models.substances import SensorModel
-from app.aecs.sensors.schemas import AddSensorSchema, SensorViewListSchema, SensorViewSchema, ChangeSensorSchema, SensorSchema
+from app.models.aecs import SensorModel
+from app.aecs.sensors.schemas import AddSensorSchema, SensorViewSchema, ChangeSensorSchema
+from app.aecs.units.utils import get_unit_by_id
+from app.aecs.status.utils import get_status_by_id
 from app.models.database import session_dependency
 
 router = APIRouter(prefix="/sensor",tags=["Sensor"])
-
-@router.post('/test')
-async def test(
-    session: session_dependency,
-    id: int
-):
-    return await utils.get_sensor_by_id(session, id)
 
 @router.post('/create')
 async def create_sensor(
@@ -77,7 +72,7 @@ async def delete_sensor_by_id(
     await session.delete(sensor)
     await session.commit()
 
-    return {"message": f"Sensor with id {id} was deleted successfully"}
+    return {"message": f"The sensor with ID {id} has been successfully deleted"}
 
 @router.put('/change')
 async def change_sensor(
@@ -93,12 +88,20 @@ async def change_sensor(
     if data.serial_number:
         sensor.serial_number = data.serial_number
     if data.unit_id:
-        sensor.unit_id = data.unit_id # Нужно добавить проверку, есть ли такая ед. измерения в справочнике
+        try:
+            if await get_unit_by_id(session, data.unit_id):
+                sensor.unit_id = data.unit_id
+        except HTTPException as e:
+            raise HTTPException(status.HTTP_400_BAD_REQUEST,detail=f'The sensor was not updated. Error: {e.detail.lower()}')
     if data.description:
         sensor.description = data.description
     if data.status:
-        sensor.status = data.status # Нужно добавить проверку, есть ли такой статус в справочнике
-    
+        try:
+            if await get_status_by_id(session, data.status):
+                sensor.status = data.status
+        except HTTPException as e:
+            raise HTTPException(status.HTTP_400_BAD_REQUEST,detail=f'The sensor was not updated. Error: {e.detail.lower()}')
+        
     await session.commit()
     await session.refresh(sensor)
     

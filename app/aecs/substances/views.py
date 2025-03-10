@@ -3,7 +3,7 @@ from sqlalchemy import select
 
 from app.aecs.substances import schemas
 from app.models.database import session_dependency
-from app.models.substances import SubstanceModel, StatusModel, UnitModel
+from app.models.aecs import SubstanceModel, StatusModel, UnitModel
 
 router = APIRouter(prefix="/substance",tags=["Substance"])
 

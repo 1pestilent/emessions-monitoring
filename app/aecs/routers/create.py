@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 
 from app.models.database import setup_database, session_dependency
-from app.models.substances import StatusModel, UnitModel, SubstanceModel
+from app.models.aecs import StatusModel, UnitModel, SubstanceModel
 from app.core import dictionary
 
 router = APIRouter(prefix="/aecs/create",tags=["CREATE"])

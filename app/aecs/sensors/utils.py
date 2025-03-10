@@ -5,7 +5,7 @@ import asyncio
 
 from app.aecs.sensors.schemas import SensorViewSchema, SensorViewListSchema
 from app.models.database import session_dependency, get_session
-from app.models.substances import SensorModel, UnitModel, StatusModel
+from app.models.aecs import SensorModel, UnitModel, StatusModel
 
 sensor_query = (
     select(
@@ -42,7 +42,7 @@ async def get_sensors(
     sensors = result.all()
 
     if not sensors:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Anyone sensors does not exist')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'No sensors exist')
 
     response = SensorViewListSchema(sensors=[sensor_to_schema(sensor) for sensor in sensors])
     
@@ -57,7 +57,7 @@ async def get_sensor_by_id(
     sensor = result.first()
 
     if not sensor:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f'Sensor with {id!r} id does not exist')
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f'The sensor with ID {id} does not exist')
     
     return sensor_to_schema(sensor)
 
@@ -70,7 +70,7 @@ async def get_sensor_by_serial(
     sensor = result.scalars().first()
 
     if not sensor:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f'Sensor with {serial_number!r} serial number does not exist')
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f'The sensor with serial number {serial_number!r} does not exist')
     
     return sensor_to_schema(sensor)
 
@@ -82,7 +82,7 @@ async def get_sensor_obj_by_id(
     sensor = result.scalars().first()
 
     if not sensor:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f'Sensor with {id!r} id does not exist')
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f'The sensor with ID {id} does not exist')
     
     return sensor
 
@@ -94,6 +94,6 @@ async def get_sensor_obj_by_serial(
     sensor = result.scalars().first()
 
     if not sensor:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f'Sensor with {id!r} id does not exist')
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f'The sensor with serial number {serial_number!r} does not exist')
     
     return sensor
