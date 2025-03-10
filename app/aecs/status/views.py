@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException,status
 from sqlalchemy import select
 
-from app.aecs import schemas
+from app.aecs.status import schemas
 from app.models.database import session_dependency
 from app.models.substances import StatusModel
 
