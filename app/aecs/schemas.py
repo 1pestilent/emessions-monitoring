@@ -66,6 +66,18 @@ class CalibrationSensorSchema(BaseModel):
     serial_number: Optional[str] = None
     calibration_date: datetime
 
+class DirtySensorSchema(BaseModel):
+    model_config = ConfigDict(strict=True, from_attributes=True)
+
+    id: int
+    name: str
+    serial_number: str
+    unit_id: int
+    installation_date: datetime | None = None
+    calibration_date: datetime | None = None
+    description: str
+    status: int
+
 class SensorSchema(BaseModel):
     model_config = ConfigDict(strict=True, from_attributes=True)
 

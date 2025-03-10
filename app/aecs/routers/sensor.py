@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, Form, HTTPException, status
 from sqlalchemy import select, asc
 from sqlalchemy.exc import IntegrityError
 from typing import Annotated
+from datetime import datetime
 
 from app.models.substances import SensorModel, UnitModel, StatusModel
 from app.aecs import schemas
@@ -144,7 +145,7 @@ async def change_sensor(
     session: session_dependency,
     data: Annotated[schemas.ChangeSensorSchema, Form()],
     sensor_id: int,
-):
+) -> schemas.DirtySensorSchema:
     query = select(SensorModel).where(SensorModel.id == sensor_id)
     result = await session.execute(query)
     sensor = result.scalars().first()
@@ -166,34 +167,48 @@ async def change_sensor(
     await session.commit()
     await session.refresh(sensor)
     
-    return sensor
+    response = schemas.DirtySensorSchema.from_orm(sensor)
+    return response
 
 
 @router.post('/installation')
 async def installation_sensor(
     session: session_dependency,
-    data: Annotated[schemas.InstallationSensorSchema, Form()],
+    date: datetime,
     sensor_id: int,
-):  
-    if data.id:
-        query = select(SensorModel).where(SensorModel.id == sensor_id)
-        result = await session.execute(query)
-        sensor = result.scalars().first()
-
-        if not sensor:
-            raise HTTPException(status_code=404, detail="Sensor does not exist")
-    else:
-        query = select(SensorModel).where(SensorModel.serial_number == data.serial_number)
-        result = await session.execute(query)
-        sensor = result.scalars().first()
-
-        if not sensor:
-            raise HTTPException(status_code=404, detail="Sensor does not exist")
-    ...
+) -> schemas.DirtySensorSchema:  
     
+    query = select(SensorModel).where(SensorModel.id == sensor_id)
+    result = await session.execute(query)
+    sensor = result.scalars().first()
+
+    if not sensor:
+        raise HTTPException(status_code=404, detail="Sensor does not exist")
+
+    sensor.installation_date = date
+    await session.commit()
+    await session.refresh(sensor)
+    
+    response = schemas.DirtySensorSchema.from_orm(sensor)
+    return response
+
 @router.post('/calibration')
 async def calibration_sensor(
     session: session_dependency,
-    data: Annotated[schemas.CalibrationSensorSchema, Form()],
-):
-    ...
+    date: datetime,
+    sensor_id: int,
+) -> schemas.DirtySensorSchema:  
+    
+    query = select(SensorModel).where(SensorModel.id == sensor_id)
+    result = await session.execute(query)
+    sensor = result.scalars().first()
+
+    if not sensor:
+        raise HTTPException(status_code=404, detail="Sensor does not exist")
+
+    sensor.calibration_date = date
+    await session.commit()
+    await session.refresh(sensor)
+    
+    response = schemas.DirtySensorSchema.from_orm(sensor)
+    return response
