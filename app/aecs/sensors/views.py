@@ -8,7 +8,8 @@ from app.aecs.sensors import utils
 from app.models.aecs import SensorModel, SensorReadingsModel
 from app.aecs.sensors.schemas import (AddSensorSchema, SensorViewSchema,
                                       ChangeSensorSchema, AddSensorReadingsSchema,
-                                      ReadingsSchema, ReadingListSchema)
+                                      ReadingsSchema, ReadingListSchema,
+                                      ResponseAverageReadingSchema)
 from app.aecs.units.utils import get_unit_by_id
 from app.aecs.status.utils import get_status_by_id
 from app.models.database import session_dependency
@@ -175,13 +176,13 @@ async def get_avg_readings(
     sensor_id: int,
     startdate: datetime | None = None,
     enddate: datetime | None = None,
-):
-    average_value = await utils.get_readings(
+) -> ResponseAverageReadingSchema:
+    average_value = round((await utils.get_readings(
         session=session,
         sensor_id=sensor_id,
         startdate = startdate,
         enddate = enddate,
         average=True
-    )
+    ))[0], 1)
 
-    return {"sensor_id": sensor_id, "avg": average_value[0]}
+    return ResponseAverageReadingSchema(sensor_id=sensor_id, value=average_value)

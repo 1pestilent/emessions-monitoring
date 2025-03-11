@@ -59,3 +59,9 @@ class ReadingsSchema(BaseModel):
 
 class ReadingListSchema(BaseModel):
     readings: List[ReadingsSchema]
+
+class ResponseAverageReadingSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
+    sensor_id: int
+    value: float
