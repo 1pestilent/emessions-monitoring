@@ -1,11 +1,11 @@
 from fastapi import HTTPException, status
-from sqlalchemy import select, asc
+from sqlalchemy import select, asc, func
 from sqlalchemy.ext.asyncio import AsyncSession 
-import asyncio
+from datetime import datetime
 
 from app.aecs.sensors.schemas import SensorViewSchema, SensorViewListSchema
 from app.models.database import session_dependency, get_session
-from app.models.aecs import SensorModel, UnitModel, StatusModel
+from app.models.aecs import SensorModel, UnitModel, StatusModel, SensorReadingsModel
 
 sensor_query = (
     select(
@@ -97,3 +97,48 @@ async def get_sensor_obj_by_serial(
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f'The sensor with serial number {serial_number!r} does not exist')
     
     return sensor
+
+async def record_sensor_readings(
+        session: AsyncSession,
+        sensor_id: int,
+        value: float,
+):
+    try:
+        readings = SensorReadingsModel(
+            sensor_id = sensor_id,
+            value = value,
+            timestamp = datetime.now())
+        
+        session.add(readings)
+        await session.commit()
+        await session.refresh(readings)
+        return {"detail": f"Data recorded successfully", "id": readings.id}
+    except Exception as error:
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to record sensor reading. Error: {error}")
+
+async def get_readings(
+        session: session_dependency,
+        sensor_id: int,
+        startdate: datetime | None,
+        enddate: datetime | None,
+        average: bool = False,
+):
+    if not average:
+        query = select(SensorReadingsModel).where(SensorReadingsModel.sensor_id == sensor_id)
+    else: 
+        query = select(func.avg(SensorReadingsModel.value)).where(SensorReadingsModel.sensor_id == sensor_id)
+        
+    if startdate and enddate:
+        query = query.where(SensorReadingsModel.timestamp >= startdate, SensorReadingsModel.timestamp <= enddate)
+    elif startdate:
+        query = query.where(SensorReadingsModel.timestamp >= startdate)
+    elif enddate:
+        query = query.where(SensorReadingsModel.timestamp <= enddate)
+
+    result = await session.execute(query)
+    readings = result.scalars().all()
+
+    if not readings:
+        raise HTTPException(status_code=404, detail="No readings found for the given criteria")
+
+    return readings

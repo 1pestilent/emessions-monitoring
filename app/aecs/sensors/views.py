@@ -5,8 +5,10 @@ from typing import Annotated, Optional
 from datetime import datetime
 
 from app.aecs.sensors import utils
-from app.models.aecs import SensorModel
-from app.aecs.sensors.schemas import AddSensorSchema, SensorViewSchema, ChangeSensorSchema
+from app.models.aecs import SensorModel, SensorReadingsModel
+from app.aecs.sensors.schemas import (AddSensorSchema, SensorViewSchema,
+                                      ChangeSensorSchema, AddSensorReadingsSchema,
+                                      ReadingsSchema, ReadingListSchema)
 from app.aecs.units.utils import get_unit_by_id
 from app.aecs.status.utils import get_status_by_id
 from app.models.database import session_dependency
@@ -108,7 +110,6 @@ async def change_sensor(
     response = await utils.get_sensor_by_id(session, sensor_id)
     return response
 
-
 @router.post('/installation')
 async def installation_sensor(
     session: session_dependency,
@@ -140,3 +141,47 @@ async def calibration_sensor(
     
     response = await utils.get_sensor_by_id(session, sensor_id)
     return response
+
+@router.post('/readings/record')
+async def record_readings(
+    session: session_dependency,
+    data: Annotated[AddSensorReadingsSchema, Form()]
+):
+    try:
+        if await get_sensor_by_id(session, data.sensor_id):
+            return await utils.record_sensor_readings(session, data.sensor_id, data.value)
+    except HTTPException as error:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=f'Failed to record data. Error: {error.detail.lower()}')
+    
+@router.get('/readings/get/{sensor_id}')
+async def get_readings(
+    session: session_dependency,
+    sensor_id: int,
+    startdate: datetime | None = None,
+    enddate: datetime | None = None,
+) -> ReadingListSchema:
+    readings = await utils.get_readings(
+        session=session,
+        sensor_id=sensor_id,
+        startdate = startdate,
+        enddate = enddate,
+    )
+
+    return ReadingListSchema(readings=[ReadingsSchema.from_orm(reading) for reading in readings])
+
+@router.get('/readings/get/average/{sensor_id}')
+async def get_avg_readings(
+    session: session_dependency,
+    sensor_id: int,
+    startdate: datetime | None = None,
+    enddate: datetime | None = None,
+):
+    average_value = await utils.get_readings(
+        session=session,
+        sensor_id=sensor_id,
+        startdate = startdate,
+        enddate = enddate,
+        average=True
+    )
+
+    return {"sensor_id": sensor_id, "avg": average_value[0]}

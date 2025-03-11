@@ -8,3 +8,4 @@ __pycache__/
 *.py[cod]
 *.pyc
 __pycache__/
+readings_generator.py

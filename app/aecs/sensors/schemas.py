@@ -44,3 +44,18 @@ class SensorViewSchema(BaseModel):
 
 class SensorViewListSchema(BaseModel):
     sensors: List[SensorViewSchema]
+
+class AddSensorReadingsSchema(BaseModel):
+    sensor_id: int
+    value: float
+
+class ReadingsSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    sensor_id: int
+    value: float
+    timestamp: datetime
+
+class ReadingListSchema(BaseModel):
+    readings: List[ReadingsSchema]
