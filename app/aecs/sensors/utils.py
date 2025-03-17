@@ -142,5 +142,4 @@ async def get_readings(
 
     if not readings:
         raise HTTPException(status_code=404, detail="No readings found for the given criteria")
-
     return readings
