@@ -15,8 +15,13 @@ from app.aecs.status.utils import get_status_by_id
 from app.aecs.units.utils import get_unit_by_id
 from app.models.aecs import SensorModel, SensorReadingsModel
 from app.models.database import session_dependency
+from app.core import cache
 
 router = APIRouter(prefix="/sensor",tags=["Sensor"])
+
+@router.get('/test')
+def test(key: str):
+    return cache.get_cached(key)
 
 @router.post('/create')
 async def create_sensor(
