@@ -1,5 +1,7 @@
-from pydantic import BaseModel, ConfigDict
 from typing import List, Optional
+
+from pydantic import BaseModel, ConfigDict
+
 
 class UnitSchema(BaseModel):
     model_config = ConfigDict(strict=True, from_attributes=True)

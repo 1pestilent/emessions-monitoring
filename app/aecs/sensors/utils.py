@@ -1,11 +1,13 @@
-from fastapi import HTTPException, status
-from sqlalchemy import select, asc, func
-from sqlalchemy.ext.asyncio import AsyncSession 
 from datetime import datetime
 
-from app.aecs.sensors.schemas import SensorViewSchema, SensorViewListSchema
-from app.models.database import session_dependency, get_session
-from app.models.aecs import SensorModel, UnitModel, StatusModel, SensorReadingsModel
+from fastapi import HTTPException, status
+from sqlalchemy import asc, func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.aecs.sensors.schemas import SensorViewListSchema, SensorViewSchema
+from app.models.aecs import (SensorModel, SensorReadingsModel, StatusModel,
+                             UnitModel)
+from app.models.database import get_session, session_dependency
 
 sensor_query = (
     select(

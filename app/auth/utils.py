@@ -1,13 +1,15 @@
+from typing import Annotated
+
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
-from typing import Annotated
 
-from app.models.database import session_dependency
-from app.users.schemas import UserSchema, SafelyUserSchema
-from app.users.utils import get_user, return_safe_user
 from app.core import security
-from app.core.config import TOKEN_TYPE_FIELD, ACCESS_TOKEN_TYPE, REFRESH_TOKEN_TYPE
+from app.core.config import (ACCESS_TOKEN_TYPE, REFRESH_TOKEN_TYPE,
+                             TOKEN_TYPE_FIELD)
+from app.models.database import session_dependency
+from app.users.schemas import SafelyUserSchema, UserSchema
+from app.users.utils import get_user, return_safe_user
 
 oauth2_schemem = OAuth2PasswordBearer('/token')
 http_bearer = HTTPBearer(auto_error=False)

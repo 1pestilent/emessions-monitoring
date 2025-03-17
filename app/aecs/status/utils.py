@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.aecs import StatusModel
 
+
 async def get_status_by_id(
         session: AsyncSession,
         id: int

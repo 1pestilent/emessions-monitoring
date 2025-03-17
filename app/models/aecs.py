@@ -1,8 +1,10 @@
-from sqlalchemy import ForeignKey, String, Text, Float, DateTime, text
-from sqlalchemy.orm import Mapped, mapped_column
 from datetime import datetime
 
+from sqlalchemy import DateTime, Float, ForeignKey, String, Text, text
+from sqlalchemy.orm import Mapped, mapped_column
+
 from app.models.database import Base
+
 
 class StatusModel(Base):
     __tablename__ = 'status'

@@ -1,17 +1,19 @@
-from fastapi import APIRouter, Depends, Form, HTTPException, status
-from sqlalchemy import select, asc
-from sqlalchemy.exc import IntegrityError
-from typing import Annotated, Optional
 from datetime import datetime
+from typing import Annotated, Optional
+
+from fastapi import APIRouter, Depends, Form, HTTPException, status
+from sqlalchemy import asc, select
+from sqlalchemy.exc import IntegrityError
 
 from app.aecs.sensors import utils
-from app.models.aecs import SensorModel, SensorReadingsModel
-from app.aecs.sensors.schemas import (AddSensorSchema, SensorViewSchema,
-                                      ChangeSensorSchema, AddSensorReadingsSchema,
-                                      ReadingsSchema, ReadingListSchema,
-                                      ResponseAverageReadingSchema)
-from app.aecs.units.utils import get_unit_by_id
+from app.aecs.sensors.schemas import (AddSensorReadingsSchema, AddSensorSchema,
+                                      ChangeSensorSchema, ReadingListSchema,
+                                      ReadingsSchema,
+                                      ResponseAverageReadingSchema,
+                                      SensorViewSchema)
 from app.aecs.status.utils import get_status_by_id
+from app.aecs.units.utils import get_unit_by_id
+from app.models.aecs import SensorModel, SensorReadingsModel
 from app.models.database import session_dependency
 
 router = APIRouter(prefix="/sensor",tags=["Sensor"])

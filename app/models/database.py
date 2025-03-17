@@ -1,12 +1,16 @@
-from sqlalchemy.ext.asyncio import AsyncSession, AsyncAttrs, create_async_engine
-from sqlalchemy.orm import DeclarativeBase, sessionmaker
-from fastapi import Depends
+import pickle
 from typing import Annotated
 
-from app.core.config import DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT
+from fastapi import Depends
+from redis import Redis
+from sqlalchemy.ext.asyncio import (AsyncAttrs, AsyncSession,
+                                    create_async_engine)
+from sqlalchemy.orm import DeclarativeBase, sessionmaker
+
+from app.core.config import (DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER,
+                             REDIS_PORT)
 
 engine = create_async_engine(f"postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
-
 
 new_session = sessionmaker(
     engine,
@@ -32,3 +36,7 @@ async def setup_database():
 
 
 session_dependency = Annotated[AsyncSession, Depends(get_session)]
+
+def connect_to_redis():
+    return Redis(host=DB_HOST, port=REDIS_PORT)
+

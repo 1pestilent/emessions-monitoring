@@ -1,5 +1,7 @@
-from pydantic import BaseModel, ConfigDict
 from typing import List
+
+from pydantic import BaseModel, ConfigDict
+
 
 class SubstanceSchema(BaseModel):
     model_config = ConfigDict(strict=True, from_attributes=True)

@@ -1,8 +1,11 @@
-import bcrypt
-import jwt
 from datetime import datetime, timedelta
 
-from app.core.config import PUBLIC_KEY_PATH, PRIVATE_KEY_PATH, TOKEN_TYPE_FIELD, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+import bcrypt
+import jwt
+
+from app.core.config import (ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM,
+                             PRIVATE_KEY_PATH, PUBLIC_KEY_PATH,
+                             TOKEN_TYPE_FIELD)
 
 
 def hash_password(password: str) -> bytes:

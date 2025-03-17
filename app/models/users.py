@@ -1,7 +1,8 @@
+from sqlalchemy import Boolean, DateTime, String, text
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import String, Boolean, DateTime, text
 
 from app.models.database import Base
+
 
 class UserModel(Base):
     __tablename__ = 'users'

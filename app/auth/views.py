@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Form, Depends
 from typing import Annotated
 
-from app.auth import utils
+from fastapi import APIRouter, Depends, Form
+
+from app.auth import create_token, utils
 from app.auth.schemas import TokenSchema, UserLoginForm
-from app.auth import create_token
 from app.models.database import session_dependency
 from app.users.schemas import SafelyUserSchema
 

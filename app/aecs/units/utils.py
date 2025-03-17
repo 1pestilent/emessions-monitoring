@@ -2,8 +2,9 @@ from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.aecs import UnitModel 
 from app.aecs.units.schemas import UnitSchema
+from app.models.aecs import UnitModel
+
 
 async def get_unit_by_id(
         session: AsyncSession,

@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Form, Depends
 from typing import Annotated
 
-from app.models.database import session_dependency
-from app.users.schemas import SafelyUserSchema, UserAddSchema, UserSchema
-from app.users import utils
+from fastapi import APIRouter, Depends, Form
+
 from app.auth import utils as autils
+from app.models.database import session_dependency
+from app.users import utils
+from app.users.schemas import SafelyUserSchema, UserAddSchema, UserSchema
 
 router = APIRouter(prefix="/users", tags=["User"])
 
