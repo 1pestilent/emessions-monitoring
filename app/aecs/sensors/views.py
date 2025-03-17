@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Annotated, Optional
 
-from fastapi import APIRouter, Depends, Form, HTTPException, status
+from fastapi import APIRouter, Query, Form, HTTPException, status
 from sqlalchemy import asc, select
 from sqlalchemy.exc import IntegrityError
 
@@ -18,10 +18,6 @@ from app.models.database import session_dependency
 from app.core import cache
 
 router = APIRouter(prefix="/sensor",tags=["Sensor"])
-
-@router.get('/test')
-def test(key: str):
-    return cache.get_cached(key)
 
 @router.post('/create')
 async def create_sensor(
@@ -165,31 +161,18 @@ async def record_readings(
 async def get_readings(
     session: session_dependency,
     sensor_id: int,
+    day: int = Query(default=0, description='День, за который нужно вывести показания. По умолчанию - текущий.', ge=0,le=31),
+    month: int = Query(default=0, description='Месяц, за который нужно вывести показания. По умолчанию - текущий.', ge=0,le=12),
     startdate: datetime | None = None,
     enddate: datetime | None = None,
 ) -> ReadingListSchema:
     readings = await utils.get_readings(
         session=session,
         sensor_id=sensor_id,
+        day=day,
+        month=month,
         startdate = startdate,
         enddate = enddate,
     )
 
     return ReadingListSchema(readings=[ReadingsSchema.from_orm(reading) for reading in readings])
-
-@router.get('/readings/get/average/{sensor_id}')
-async def get_avg_readings(
-    session: session_dependency,
-    sensor_id: int,
-    startdate: datetime | None = None,
-    enddate: datetime | None = None,
-) -> ResponseAverageReadingSchema:
-    average_value = round((await utils.get_readings(
-        session=session,
-        sensor_id=sensor_id,
-        startdate = startdate,
-        enddate = enddate,
-        average=True
-    ))[0], 1)
-
-    return ResponseAverageReadingSchema(sensor_id=sensor_id, value=average_value)

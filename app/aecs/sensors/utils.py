@@ -1,6 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Query
 from sqlalchemy import asc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -121,21 +121,26 @@ async def record_sensor_readings(
 async def get_readings(
         session: session_dependency,
         sensor_id: int,
-        startdate: datetime | None,
-        enddate: datetime | None,
-        average: bool = False,
+        day: int = 0,
+        month: int = 0,
+        startdate: datetime | None = None,
+        enddate: datetime | None = None,
 ):
-    if not average:
-        query = select(SensorReadingsModel).where(SensorReadingsModel.sensor_id == sensor_id)
-    else: 
-        query = select(func.avg(SensorReadingsModel.value)).where(SensorReadingsModel.sensor_id == sensor_id)
-        
-    if startdate and enddate:
-        query = query.where(SensorReadingsModel.timestamp >= startdate, SensorReadingsModel.timestamp <= enddate)
-    elif startdate:
-        query = query.where(SensorReadingsModel.timestamp >= startdate)
-    elif enddate:
-        query = query.where(SensorReadingsModel.timestamp <= enddate)
+    query = select(SensorReadingsModel).where(SensorReadingsModel.sensor_id == sensor_id)
+
+    if (startdate or enddate) and not (day or month):
+        if startdate:
+            query = query.where(SensorReadingsModel.timestamp >= startdate)
+        if enddate:
+            query = query.where(SensorReadingsModel.timestamp <= enddate)
+    elif not (startdate or enddate) and (day or month):
+        now = datetime.now()
+        if day and not month:
+            query = query.where(SensorReadingsModel.timestamp >= datetime(now.year, now.month, now.day))
+        if not day and month:
+            query = query.where(SensorReadingsModel.timestamp >= datetime(now.year, now.month, 1))
+        if day and month:
+            raise HTTPException(status.HTTP_400_BAD_REQUEST)
 
     result = await session.execute(query)
     readings = result.scalars().all()
