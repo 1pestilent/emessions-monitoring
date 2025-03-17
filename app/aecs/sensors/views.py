@@ -157,7 +157,7 @@ async def record_readings(
     except HTTPException as error:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=f'Failed to record data. Error: {error.detail.lower()}')
     
-@router.get('/readings/get/{sensor_id}')
+@router.get('/readings/get/')
 async def get_readings(
     session: session_dependency,
     sensor_id: int,
@@ -176,3 +176,14 @@ async def get_readings(
     )
 
     return ReadingListSchema(readings=[ReadingsSchema.from_orm(reading) for reading in readings])
+
+@router.get('/readings/get/stats')
+async def get_readings_stats(
+    session: session_dependency,
+    sensor_id: int,
+    day: int = Query(default=0, description='День, за который нужно вывести показания. По умолчанию - текущий.', ge=0,le=31),
+    month: int = Query(default=0, description='Месяц, за который нужно вывести показания. По умолчанию - текущий.', ge=0,le=12),
+    startdate: datetime | None = None,
+    enddate: datetime | None = None,
+):
+    return await utils.get_readings_stats(session, sensor_id, day, month, startdate, enddate)

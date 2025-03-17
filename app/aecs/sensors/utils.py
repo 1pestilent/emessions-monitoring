@@ -118,16 +118,13 @@ async def record_sensor_readings(
     except Exception as error:
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to record sensor reading. Error: {error}")
 
-async def get_readings(
-        session: session_dependency,
-        sensor_id: int,
+def readings_filter(
+        query: select,
         day: int = 0,
         month: int = 0,
         startdate: datetime | None = None,
         enddate: datetime | None = None,
-):
-    query = select(SensorReadingsModel).where(SensorReadingsModel.sensor_id == sensor_id)
-
+        ) -> select:
     if (startdate or enddate) and not (day or month):
         if startdate:
             query = query.where(SensorReadingsModel.timestamp >= startdate)
@@ -141,10 +138,42 @@ async def get_readings(
             query = query.where(SensorReadingsModel.timestamp >= datetime(now.year, now.month, 1))
         if day and month:
             raise HTTPException(status.HTTP_400_BAD_REQUEST)
+    return query
 
-    result = await session.execute(query)
+async def get_readings(
+        session: session_dependency,
+        sensor_id: int,
+        day: int = 0,
+        month: int = 0,
+        startdate: datetime | None = None,
+        enddate: datetime | None = None,
+):
+    query = select(SensorReadingsModel).where(SensorReadingsModel.sensor_id == sensor_id)
+    filtered_query = readings_filter(query, day, month, startdate, enddate)
+    result = await session.execute(filtered_query)
     readings = result.scalars().all()
 
     if not readings:
         raise HTTPException(status_code=404, detail="No readings found for the given criteria")
     return readings
+
+async def get_readings_stats(
+        session: session_dependency,
+        sensor_id: int,
+        day: int = 0,
+        month: int = 0,
+        startdate: datetime | None = None,
+        enddate: datetime | None = None,\
+):
+    query = select(
+        func.avg(SensorReadingsModel.value).label("average_value"),
+        func.min(SensorReadingsModel.value).label("min_value"),
+        func.max(SensorReadingsModel.value).label("max_value"),
+        func.count(SensorReadingsModel.id).label("total_readings"),
+        ).where(SensorReadingsModel.sensor_id == sensor_id)
+    
+    filtered_query = readings_filter(query, day, month, startdate, enddate)
+    result = await session.execute(filtered_query)
+    readings = result.scalars().all()
+    return readings
+    
