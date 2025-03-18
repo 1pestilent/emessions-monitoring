@@ -1,19 +1,14 @@
 import uvicorn
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
-from app.aecs import views as aecs
-from app.aecs.routers import create
-from app.auth import views as auth
-from app.models.database import setup_database
-from app.users import views as users
+from app import router
+from app.core.config import STATIC_DIR
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
-app.include_router(users.router)
-app.include_router(auth.router)
-app.include_router(aecs.router)
-app.include_router(create.router)
-
+app.include_router(router)
 
 if __name__ == '__main__':
     uvicorn.run(app="app.main:app", reload=True) 

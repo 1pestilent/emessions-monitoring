@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+TEMPLATE_DIR = BASE_DIR / "app" / "templates"
+STATIC_DIR = BASE_DIR / "app" / "static"
 
 # Параметры PostgreSQL
 DB_NAME = os.getenv('DB_NAME')
