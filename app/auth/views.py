@@ -16,7 +16,6 @@ async def login_for_token(
     session: session_dependency,
     user: Annotated[UserLoginForm, Depends()],
 ) -> TokenSchema:
-    
     user = await utils.authenticate_user(session, user.username, user.password)
     
     access_token = await create_token.access_token(user)

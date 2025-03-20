@@ -9,7 +9,8 @@
 <body>
     <div class="auth-form">
         <h2>Авторизация</h2>
-        <form action="/auth/token" method="POST">
+        <form id="loginForm">
+            <div id="loadingSpinner" style="display: none;">Загрузка...</div>
             <div class="form-group">
                 <label for="username">Имя пользователя:</label>
                 <input type="text" id="username" name="username" required>
@@ -18,8 +19,11 @@
                 <label for="password">Пароль:</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            <button type="submit">Войти</button>
+            <div id="errorMessage" class="error" style="display: none;"></div>
+            <button type="submit" id="submitButton">Войти</button>
+            <div id="loadingSpinner" style="display: none;">Загрузка...</div>
         </form>
     </div>
+    <script src="{{ url_for('static', path='scripts/login.js') }}"></script>
 </body>
 </html>
