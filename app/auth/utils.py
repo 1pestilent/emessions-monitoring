@@ -1,12 +1,13 @@
-from typing import Annotated
+from typing import Annotated, Union
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Cookie, Depends, HTTPException, status
 from fastapi.security import HTTPBearer, OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 
 from app.core import security
 from app.core.config import (ACCESS_TOKEN_TYPE, REFRESH_TOKEN_TYPE,
                              TOKEN_TYPE_FIELD)
+from app.auth import create_token
 from app.models.database import session_dependency
 from app.users.schemas import SafelyUserSchema, UserSchema
 from app.users.utils import get_user, return_safe_user
@@ -35,16 +36,15 @@ def get_token_payload(
     try: 
         payload = security.decode_jwt(token)
     except InvalidTokenError as e:
-        raise HTTPException(
-            status.HTTP_401_UNAUTHORIZED,
-            detail=f"Invalid token error: {e}"
-        )
+        return None
     return payload
 
 def validate_token_type(
         payload: dict,
         token_type: str,
 ) -> bool:
+    if not payload:
+        return False
     current_token_type = payload.get(TOKEN_TYPE_FIELD)
     if current_token_type == token_type:
         return True
@@ -91,3 +91,14 @@ async def get_current_user_for_refresh(
         user = await get_user_from_payload(payload, session)
     if is_user_active:
         return user
+    
+async def get_new_access_token(
+        session: session_dependency,
+        refresh_token: str,
+        ) -> Union[str, None]:
+    payload = get_token_payload(refresh_token)
+    if payload is not None:
+        user = await get_current_user_for_refresh(payload, session)
+        return create_token.access_token(user)
+    
+    return False

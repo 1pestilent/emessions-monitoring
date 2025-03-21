@@ -6,7 +6,7 @@ from app.core.security import encode_jwt
 from app.users.schemas import UserSchema
 
 
-async def access_token(user: UserSchema,
+def access_token(user: UserSchema,
                             expire_timedelta: int | None = None
                             ) -> str:
     payload = {
@@ -20,7 +20,7 @@ async def access_token(user: UserSchema,
          expire_timedelta= expire_timedelta
     )
 
-async def refresh_token(user: UserSchema,
+def refresh_token(user: UserSchema,
     expire_timedelta: int | None = None
     ) -> str:
     payload = {

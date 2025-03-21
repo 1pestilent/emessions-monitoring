@@ -16,7 +16,6 @@ function validateInputs(username, password) {
     return errors;
 }
 
-// Обработчик отправки формы
 document.getElementById('loginForm').addEventListener('submit', async function(event) {
     event.preventDefault();
 
