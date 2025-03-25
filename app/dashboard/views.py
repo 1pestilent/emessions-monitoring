@@ -13,7 +13,7 @@ async def workspace(
     request: Request,
     authorization: Union[Response, str, True] = Depends(is_authorized),
     ):
-    response = template.TemplateResponse(request=request, name="base.html", context={"title": "Дашборд"})
+    response = template.TemplateResponse(request=request, name="dashboard.html", context={"title": "Дашборд"})
 
     if isinstance(authorization, RedirectResponse):
         return authorization

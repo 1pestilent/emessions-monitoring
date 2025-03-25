@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }}</title>
-    <link rel="stylesheet" href="../static/base_styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', path='base_styles.css') }}">
+    {% block styles %}{% endblock %}
 </head>
 <body>
     <header>
+        {% block header %}
         <div class="upper-header">
             <div class="logo">СИСТЕМА МОНИТОРИНГА ВЫБРОСОВ</div>
             <div class="acc-bar">
@@ -43,9 +45,20 @@
                     Воздухонагреватели ДП №4
                 </a>
             </div>
-            
         </div>
+        {% endblock %}
     </header>
-    <script src="../static/scripts/base.js"></script>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        {% block footer %}
+          <p>&copy; 2023 My Website</p>
+        {% endblock %}
+      </footer>
+      
+    <script src="{{ url_for('static', path='scripts/base.js') }}"></script>
 </body>
 </html>
