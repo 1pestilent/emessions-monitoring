@@ -45,18 +45,34 @@ def validate_token_type(
 ) -> bool:
     if not payload:
         return False
+    
     current_token_type = payload.get(TOKEN_TYPE_FIELD)
-    if current_token_type == token_type:
-        return True
-    raise HTTPException(
-        status.HTTP_401_UNAUTHORIZED,
-        detail=f'Invalid token type {current_token_type!r} expected {token_type!r}'
-    )
+    
+    if not current_token_type == token_type:
+        return False
+    
+    return True
+    
+def validate_token(
+        token: str,
+        token_type: str = ACCESS_TOKEN_TYPE,
+) -> bool:
+    payload = get_token_payload(token)
 
+    if not payload:
+        return False
+    
+    if not validate_token_type(payload,ACCESS_TOKEN_TYPE):
+        return False
+    
+    return True
+    
 async def get_user_from_payload(
         payload: dict,
         session: session_dependency,
 ) -> SafelyUserSchema:
+    if not payload:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED)
     username = payload.get("sub")
     user = await get_user(session, username)
     out_user = return_safe_user(user)
@@ -66,6 +82,7 @@ def is_user_active(
     payload: dict,
 ) -> bool:
     is_active = payload.get("is_active")
+
     if is_active:
         return True
     
@@ -83,6 +100,19 @@ async def get_current_user(
     if is_user_active:
         return user
     
+async def get_current_user_from_token(
+        token: str,
+        session: session_dependency,
+) -> SafelyUserSchema:
+    payload = get_token_payload(token)
+
+    if not validate_token(token):
+        print(validate_token(token))
+        raise HTTPException(status.HTTP_403_FORBIDDEN)
+        
+    user = await get_user_from_payload(payload, session)
+    return user
+    
 async def get_current_user_for_refresh(
         payload: Annotated[dict, Depends(get_token_payload)],
         session: session_dependency,
@@ -98,7 +128,7 @@ async def get_new_access_token(
         ) -> Union[str, None]:
     payload = get_token_payload(refresh_token)
     if payload is not None:
-        user = await get_current_user_for_refresh(payload, session)
+        user = await get_user_from_payload(payload, session)
         return create_token.access_token(user)
     
     return False

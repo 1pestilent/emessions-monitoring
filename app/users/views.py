@@ -16,6 +16,7 @@ async def add_user(
     ) -> int:
     if await utils.user_is_uniq(session, new_user.username, new_user.email):
         user_id = await utils.create_user(session, new_user)
+        # переделать ответ
         return user_id 
 
 @router.get('/get/{username}',

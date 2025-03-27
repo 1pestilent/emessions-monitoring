@@ -1,23 +1,23 @@
-from typing import Annotated, Union
+from typing import Union
 
-from fastapi import APIRouter, Request, Depends, Response
+from fastapi import APIRouter, Request, Depends
 from fastapi.responses import RedirectResponse
 
 from app.templates import template
-from app.auth.middleware import is_authorized
+from app.users.schemas import SafelyUserSchema
+from app.auth.middleware import get_user_from_cookies
+from app.models.database import session_dependency
 
+ 
 router = APIRouter()
 
 @router.get('/')
 async def workspace(
     request: Request,
-    authorization: Union[Response, str, True] = Depends(is_authorized),
+    user: Union[SafelyUserSchema] = Depends(get_user_from_cookies),
     ):
-    response = template.TemplateResponse(request=request, name="dashboard.html", context={"title": "Дашборд"})
-
-    if isinstance(authorization, RedirectResponse):
-        return authorization
-    elif isinstance(authorization, str):
-        response.set_cookie(key="access_token", value=authorization)
-
+    if isinstance(user, RedirectResponse):
+        return user
+    
+    response = template.TemplateResponse(request=request, name="dashboard.html", context={"title": "Дашборд", "username": user.username})
     return response

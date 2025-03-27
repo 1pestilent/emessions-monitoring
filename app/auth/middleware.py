@@ -1,34 +1,43 @@
 from typing import Union, Annotated
 
-from fastapi import Request, Response, Depends, Cookie
+from fastapi import Request, Depends, Cookie, HTTPException, status
 from fastapi.responses import RedirectResponse
 
-from app.auth.utils import get_token_payload, get_new_access_token, validate_token_type
-from app.core.config import ACCESS_TOKEN_TYPE
+from app.auth.utils import get_new_access_token, validate_token, get_current_user_from_token
+from app.core.config import ACCESS_TOKEN_TYPE, REFRESH_TOKEN_TYPE 
 from app.models.database import session_dependency
+from app.users.schemas import SafelyUserSchema
 
-auth_redirect = RedirectResponse('/auth')
-auth_redirect.delete_cookie("access_token")
-auth_redirect.delete_cookie("refresh_token")
-
-
+redirect_to_auth = RedirectResponse('/auth')
+redirect_to_auth.delete_cookie('access_token')
+redirect_to_auth.delete_cookie('refresh_token')
 
 async def is_authorized(
         session: session_dependency,
         access_token: Union[str, None] = Cookie(None),
         refresh_token: Union[str, None] = Cookie(None),
-    )-> Union[Response, None]:
-    
-    auth_redirect = RedirectResponse('/auth')
-    auth_redirect.delete_cookie("access_token")
-    auth_redirect.delete_cookie("refresh_token")
+    )-> Union[str, RedirectResponse]:
 
-    if not access_token and not refresh_token:
-        return auth_redirect
+    if validate_token(access_token):
+        return access_token
+    else:
+        if validate_token(refresh_token, REFRESH_TOKEN_TYPE):
+            new_token = await get_new_access_token(session, refresh_token)
+            return new_token
+        
+
+async def get_user_from_cookies(
+        session: session_dependency,
+        token: Union[str, RedirectResponse] = Depends(is_authorized)
+) -> SafelyUserSchema | RedirectResponse:
+    print(token)
+    if isinstance(token, RedirectResponse):
+        return token
     
-    payload = get_token_payload(access_token)
-    if payload is None or not validate_token_type(payload, ACCESS_TOKEN_TYPE):
-        new_access_token = await get_new_access_token(session, refresh_token)
-        return new_access_token if new_access_token else auth_redirect
-            
-    return True
+    try:
+        user = await get_current_user_from_token(token, session)
+    except HTTPException as e:
+        if e.status_code == 401 or 403 or 404:
+            return redirect_to_auth
+        raise 
+    return user
