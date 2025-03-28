@@ -42,14 +42,21 @@ async def refresh_access_token(
         access_token=access_token
     )
 
-@router.get("/")
+@router.get('/')
 async def login(
     request: Request,
-    user: Union[SafelyUserSchema] = Depends(get_user_from_cookies),
+    user: Union[SafelyUserSchema, RedirectResponse] = Depends(get_user_from_cookies),
     ):
 
-    if isinstance(user, RedirectResponse):
-        pass
+    if isinstance(user, SafelyUserSchema):
+        return RedirectResponse('/')
     
     response = template.TemplateResponse(request=request, name="login.html", context={"title": "Авторизация пользователя"})
+    return response
+
+@router.get('/logout')
+def logout():
+    response = RedirectResponse('/auth')
+    response.delete_cookie('access_token')
+    response.delete_cookie('refresh_token')
     return response

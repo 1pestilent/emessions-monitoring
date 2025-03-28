@@ -107,7 +107,6 @@ async def get_current_user_from_token(
     payload = get_token_payload(token)
 
     if not validate_token(token):
-        print(validate_token(token))
         raise HTTPException(status.HTTP_403_FORBIDDEN)
         
     user = await get_user_from_payload(payload, session)

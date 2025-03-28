@@ -10,10 +10,10 @@ from app.aecs.sensors.schemas import (AddSensorReadingsSchema, AddSensorSchema,
                                       ChangeSensorSchema, ReadingListSchema,
                                       ReadingsSchema,
                                       ResponseAverageReadingSchema,
-                                      SensorViewSchema)
+                                      SensorViewSchema, LocationSchema)
 from app.aecs.status.utils import get_status_by_id
 from app.aecs.units.utils import get_unit_by_id
-from app.models.aecs import SensorModel, SensorReadingsModel
+from app.models.aecs import SensorModel, LocationModel
 from app.models.database import session_dependency
 from app.core import cache
 
@@ -149,7 +149,7 @@ async def calibration_sensor(
 @router.post('/readings/record')
 async def record_readings(
     session: session_dependency,
-    data: Annotated[AddSensorReadingsSchema, Form()]
+    data: Annotated[AddSensorReadingsSchema, Form()],
 ):
     try:
         if await get_sensor_by_id(session, data.sensor_id):
@@ -187,3 +187,41 @@ async def get_readings_stats(
     enddate: datetime | None = None,
 ):
     return await utils.get_readings_stats(session, sensor_id, day, month, startdate, enddate)
+
+@router.post('/location/create')
+async def create_location(
+    session: session_dependency,
+    data: Annotated[LocationSchema, Form()],   
+):  
+    result = await session.execute(
+        select(LocationModel)
+        .where(LocationModel.name == data.name)
+        )
+    location = result.first()
+
+    if location:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'Location {data.name!r} already exists')
+      
+    try: 
+        location = LocationModel(
+            name=data.name,
+            description=data.description,
+        )
+
+        session.add(location)
+        await session.commit()
+        await session.refresh(location)
+
+        return {"message": "Location created successfully"}
+    
+    except IntegrityError as e:
+
+        await session.rollback()
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'Error: {e!r}')
+
+@router.get('/locations/all')
+async def get_locations(
+    session: session_dependency,
+):
+    locations = await utils.get_locations(session)
+    return locations

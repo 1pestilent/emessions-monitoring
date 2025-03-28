@@ -67,3 +67,7 @@ class ResponseAverageReadingSchema(BaseModel):
     
     sensor_id: int
     value: float
+
+class LocationSchema(BaseModel):
+    name: str
+    description: str | None

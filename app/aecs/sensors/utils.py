@@ -1,13 +1,13 @@
-from datetime import datetime, timedelta
-
-from fastapi import HTTPException, status, Query
+from datetime import datetime
+import asyncio
+from fastapi import HTTPException, status
 from sqlalchemy import asc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.aecs.sensors.schemas import SensorViewListSchema, SensorViewSchema
 from app.models.aecs import (SensorModel, SensorReadingsModel, StatusModel,
-                             UnitModel)
-from app.models.database import get_session, session_dependency
+                             UnitModel, LocationModel)
+from app.models.database import session_dependency, get_session
 
 sensor_query = (
     select(
@@ -176,4 +176,14 @@ async def get_readings_stats(
     result = await session.execute(filtered_query)
     readings = result.scalars().all()
     return readings
+
+async def get_locations(
+        session: session_dependency
+) -> dict:
+    result = await session.execute(select(LocationModel))
+    locations = result.scalars().all()
     
+    if not locations:
+        raise HTTPException(status.HTTP_404_NOT_FOUND)
+    
+    return locations

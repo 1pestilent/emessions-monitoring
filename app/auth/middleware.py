@@ -30,10 +30,9 @@ async def get_user_from_cookies(
         session: session_dependency,
         token: Union[str, RedirectResponse] = Depends(is_authorized)
 ) -> SafelyUserSchema | RedirectResponse:
-    print(token)
+    
     if isinstance(token, RedirectResponse):
         return token
-    
     try:
         user = await get_current_user_from_token(token, session)
     except HTTPException as e:
