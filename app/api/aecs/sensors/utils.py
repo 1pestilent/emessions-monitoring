@@ -1,10 +1,10 @@
 from datetime import datetime
-import asyncio
+
 from fastapi import HTTPException, status
 from sqlalchemy import asc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.aecs.sensors.schemas import SensorViewListSchema, SensorViewSchema
+from app.api.aecs.sensors.schemas import SensorViewListSchema, SensorViewSchema
 from app.models.aecs import (SensorModel, SensorReadingsModel, StatusModel,
                              UnitModel, LocationModel)
 from app.models.database import session_dependency, get_session

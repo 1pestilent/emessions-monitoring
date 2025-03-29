@@ -3,14 +3,14 @@ from typing import Annotated, Union
 from fastapi import APIRouter, Depends, Request, Response, status
 from fastapi.responses import RedirectResponse
 
-from app.auth import create_token, utils
-from app.auth.middleware import get_user_from_cookies
+from app.api.auth import create_token, utils
+from app.api.auth.middleware import get_user_from_cookies
 from app.templates import template
-from app.auth.schemas import TokenSchema, UserLoginForm
+from app.api.auth.schemas import TokenSchema, UserLoginForm
 from app.models.database import session_dependency
-from app.users.schemas import SafelyUserSchema
+from app.api.users.schemas import SafelyUserSchema
 
-router = APIRouter(prefix="/auth",tags=["Auth"])
+router = APIRouter(prefix="/login",tags=["Authorization"])
 
 @router.post('/token')
 async def login_for_token(
@@ -41,22 +41,3 @@ async def refresh_access_token(
     return TokenSchema(
         access_token=access_token
     )
-
-@router.get('/')
-async def login(
-    request: Request,
-    user: Union[SafelyUserSchema, RedirectResponse] = Depends(get_user_from_cookies),
-    ):
-
-    if isinstance(user, SafelyUserSchema):
-        return RedirectResponse('/')
-    
-    response = template.TemplateResponse(request=request, name="login.html", context={"title": "Авторизация пользователя"})
-    return response
-
-@router.get('/logout')
-def logout():
-    response = RedirectResponse('/auth')
-    response.delete_cookie('access_token')
-    response.delete_cookie('refresh_token')
-    return response

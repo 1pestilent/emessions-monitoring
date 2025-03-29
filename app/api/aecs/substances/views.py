@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, HTTPException, status
 from sqlalchemy import select
 
-from app.aecs.substances import schemas
-from app.models.aecs import StatusModel, SubstanceModel, UnitModel
+from app.api.aecs.substances import schemas
+from app.models.aecs import SubstanceModel, UnitModel
 from app.models.database import session_dependency
 
 router = APIRouter(prefix="/substance",tags=["Substance"])

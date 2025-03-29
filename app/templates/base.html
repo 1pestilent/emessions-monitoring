@@ -30,17 +30,10 @@
             </div>
         </div>
         <div class="lower-header">
-            {% for location in locations %}
-            <div class="location-container">
-                <a href="">
-                    {{ location.name }}
-                </a>
-            </div>
-            {% endfor %}
         </div>
         {% endblock %}
     </header>
-
+    
     <main>
         {% block content %}{% endblock %}
     </main>

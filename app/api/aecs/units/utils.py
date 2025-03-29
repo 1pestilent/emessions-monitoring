@@ -2,7 +2,7 @@ from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.aecs.units.schemas import UnitSchema
+from app.api.aecs.units.schemas import UnitSchema
 from app.models.aecs import UnitModel
 
 

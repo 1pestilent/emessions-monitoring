@@ -7,10 +7,10 @@ from jwt.exceptions import InvalidTokenError
 from app.core import security
 from app.core.config import (ACCESS_TOKEN_TYPE, REFRESH_TOKEN_TYPE,
                              TOKEN_TYPE_FIELD)
-from app.auth import create_token
+from app.api.auth import create_token
 from app.models.database import session_dependency
-from app.users.schemas import SafelyUserSchema, UserSchema
-from app.users.utils import get_user, return_safe_user
+from app.api.users.schemas import SafelyUserSchema, UserSchema
+from app.api.users.utils import get_user, return_safe_user
 
 oauth2_schemem = OAuth2PasswordBearer('/token')
 http_bearer = HTTPBearer(auto_error=False)
@@ -62,7 +62,7 @@ def validate_token(
     if not payload:
         return False
     
-    if not validate_token_type(payload,ACCESS_TOKEN_TYPE):
+    if not validate_token_type(payload, token_type):
         return False
     
     return True

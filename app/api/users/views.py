@@ -2,10 +2,10 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Form
 
-from app.auth import utils as autils
+from app.api.auth import utils as autils
 from app.models.database import session_dependency
-from app.users import utils
-from app.users.schemas import SafelyUserSchema, UserAddSchema, UserSchema
+from app.api.users import utils
+from app.api.users.schemas import SafelyUserSchema, UserAddSchema, UserSchema
 
 router = APIRouter(prefix="/users", tags=["User"])
 

@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.security import hash_password
 from app.models.database import session_dependency
 from app.models.users import UserModel
-from app.users.schemas import SafelyUserSchema, UserAddSchema, UserSchema
+from app.api.users.schemas import SafelyUserSchema, UserAddSchema, UserSchema
 
 
 def return_safe_user(user: UserSchema) -> SafelyUserSchema:

@@ -5,14 +5,14 @@ from fastapi import APIRouter, Query, Form, HTTPException, status
 from sqlalchemy import asc, select
 from sqlalchemy.exc import IntegrityError
 
-from app.aecs.sensors import utils
-from app.aecs.sensors.schemas import (AddSensorReadingsSchema, AddSensorSchema,
+from app.api.aecs.sensors import utils
+from app.api.aecs.sensors.schemas import (AddSensorReadingsSchema, AddSensorSchema,
                                       ChangeSensorSchema, ReadingListSchema,
                                       ReadingsSchema,
                                       ResponseAverageReadingSchema,
                                       SensorViewSchema, LocationSchema)
-from app.aecs.status.utils import get_status_by_id
-from app.aecs.units.utils import get_unit_by_id
+from app.api.aecs.status.utils import get_status_by_id
+from app.api.aecs.units.utils import get_unit_by_id
 from app.models.aecs import SensorModel, LocationModel
 from app.models.database import session_dependency
 from app.core import cache

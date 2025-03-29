@@ -3,7 +3,7 @@ from datetime import timedelta
 from app.core.config import (ACCESS_TOKEN_TYPE, REFRESH_TOKEN_EXPIRE_DAYS,
                              REFRESH_TOKEN_TYPE)
 from app.core.security import encode_jwt
-from app.users.schemas import UserSchema
+from app.api.users.schemas import UserSchema
 
 
 def access_token(user: UserSchema,
