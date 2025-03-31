@@ -1,10 +1,10 @@
 from typing import Annotated, Union
 
-from fastapi import Cookie, Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 
-from app.core import security
+from app.core import security, exceptions
 from app.core.config import (ACCESS_TOKEN_TYPE, REFRESH_TOKEN_TYPE,
                              TOKEN_TYPE_FIELD)
 from app.api.auth import create_token
@@ -12,7 +12,7 @@ from app.models.database import session_dependency
 from app.api.users.schemas import SafelyUserSchema, UserSchema
 from app.api.users.utils import get_user, return_safe_user
 
-oauth2_schemem = OAuth2PasswordBearer('/token')
+oauth2_scheme = OAuth2PasswordBearer('/api/login/')
 http_bearer = HTTPBearer(auto_error=False)
 
 async def authenticate_user(
@@ -22,21 +22,19 @@ async def authenticate_user(
         ) -> SafelyUserSchema:
     user: UserSchema = await get_user(session, username)
     if not security.verify_password(password, user.password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect login or password",
-            headers={"WWW-Authenticate": "Bearer"},
-            )
+        raise exceptions.incorrect_credentials
 
     return return_safe_user(user)
 
 def get_token_payload(
-        token: Annotated[str, Depends(oauth2_schemem)]
+        token: Annotated[str, Depends(oauth2_scheme)]
         ) -> dict:
     try: 
         payload = security.decode_jwt(token)
+
     except InvalidTokenError as e:
         return None
+    
     return payload
 
 def validate_token_type(
@@ -52,7 +50,7 @@ def validate_token_type(
         return False
     
     return True
-    
+
 def validate_token(
         token: str,
         token_type: str = ACCESS_TOKEN_TYPE,
@@ -73,10 +71,11 @@ async def get_user_from_payload(
 ) -> SafelyUserSchema:
     if not payload:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+    
     username = payload.get("sub")
     user = await get_user(session, username)
     out_user = return_safe_user(user)
-    return  out_user
+    return out_user
 
 def is_user_active(
     payload: dict,
@@ -86,10 +85,7 @@ def is_user_active(
     if is_active:
         return True
     
-    raise HTTPException(
-        status.HTTP_401_UNAUTHORIZED,
-        detail='This user is not activated'
-    )
+    raise exceptions.user_inactive
 
 async def get_current_user(
         payload: Annotated[dict, Depends(get_token_payload)],

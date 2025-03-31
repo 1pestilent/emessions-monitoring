@@ -16,6 +16,11 @@ function validateInputs(username, password) {
     return errors;
 }
 
+function getCookie(name) {
+    let cookie = document.cookie.split('; ').find(row => row.startsWith(name + '='));
+    return cookie ? cookie.split('=')[1] : null;
+}
+
 document.getElementById('loginForm').addEventListener('submit', async function(event) {
     event.preventDefault();
 
@@ -43,16 +48,20 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         formData.append('username', username);
         formData.append('password', password);
 
-        const response = await fetch('/auth/token', {
+        const response = await fetch('/api/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: formData,
         });
-        console.log('Status:', response.status);
-        console.log('Headers:', [...response.headers]);
+
         if (response.ok) {
+            tokens = await response.json()
+            const expiryDate = new Date();
+            expiryDate.setDate(expiryDate.getDate()+ 30);
+            document.cookie = `access_token=${tokens.access_token};`;
+            document.cookie = `refresh_token=${tokens.refresh_token}; expires=${expiryDate.toUTCString()}`;
             window.location.href = '/';
         } else {
             errorMessage.textContent = 'Неверный логин или пароль! Если Вы забыли пароль - обратитесь к системному администратору!';
