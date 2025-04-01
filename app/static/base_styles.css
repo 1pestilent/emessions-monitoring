@@ -68,7 +68,8 @@ header {
 .dropdown-content a:hover {
     background-color: #f1f1f1;
     border-radius: 15px 0px 15px 15px;
-    border: solid grey 1px;
+    border: solid grey 2px;
+    cursor: pointer;
 }
 
 .logo {

@@ -16,11 +16,6 @@ function validateInputs(username, password) {
     return errors;
 }
 
-function getCookie(name) {
-    let cookie = document.cookie.split('; ').find(row => row.startsWith(name + '='));
-    return cookie ? cookie.split('=')[1] : null;
-}
-
 document.getElementById('loginForm').addEventListener('submit', async function(event) {
     event.preventDefault();
 

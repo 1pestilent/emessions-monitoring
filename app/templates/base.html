@@ -16,14 +16,14 @@
                 Пользователь
                 <div id="dropdown" class="dropdown" onclick="myFunction()">
                     <div class="dropdown-button acc-menu">
-                        <div class="user">
-                            {{ username }}
+                        <div class="user" id="username">
+                        
                         </div>
-                        <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" style="position: relative; top: 4px;">
+                        <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" style="position: relative;cursor: pointer; top: 4px;">
                             <image href="../static/icons/arrow_drop_down.svg" height="20" width="20" style="filter: brightness(0);">
                         </svg>
                         <div id="dropdown-contentlist" class="dropdown-content">
-                            <a href="/auth/logout">Выйти</a>
+                            <a id="logout_btn" onclick="logout()">Выйти</a>
                         </div>
                     </div>
                 </div>
