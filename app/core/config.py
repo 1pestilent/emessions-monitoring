@@ -33,3 +33,7 @@ REFRESH_TOKEN_TYPE = "refresh"
 
 ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 REFRESH_TOKEN_EXPIRE_DAYS: int = 30
+
+# Middleware
+PUBLIC_PATHS = ["/login", "/docs"]
+PUBLIC_PATH_PREFIXES = ["/static", "/api"]
