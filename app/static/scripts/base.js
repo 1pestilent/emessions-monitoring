@@ -13,6 +13,20 @@ function logout() {
     window.location.href = '/login';
 }
 
+async function get_locations () {
+    const response = await fetch('/api/aecs/sensor/locations/all', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+    });
+
+    if (response.ok) {
+        let locations = await response.json();
+        console.log(locations);
+        return locations;
+}};
+
 document.addEventListener("click", function(event) {
     const dropdown = document.getElementById("dropdown");
     const dropdownContent = document.getElementById("dropdown-contentlist");
@@ -30,4 +44,17 @@ document.addEventListener('DOMContentLoaded', async function(event) {
     
     const header_username = document.getElementById('username')
     header_username.textContent = payload.sub;
+
+    const lower_header = document.getElementById('lower-header')
+
+    locations = await get_locations()
+    locations.forEach(location => {
+        const locationDiv = document.createElement('div');
+        locationDiv.className = 'location-container';
+        locationDiv.innerHTML = `
+                <a href="#">
+                    ${location.name}
+                </a>`;
+        lower_header.appendChild(locationDiv);
+    })
 });

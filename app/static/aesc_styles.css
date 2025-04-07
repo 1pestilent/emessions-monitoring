@@ -31,8 +31,7 @@ body {
     border-radius: 15px;
 }
 .graph {
-    padding: 0 0 30px 30px;
-    height: 30%;
+    padding: 30px;
 }
 
 .stats {
