@@ -15,9 +15,8 @@ from app.api.aecs.status.utils import get_status_by_id
 from app.api.aecs.units.utils import get_unit_by_id
 from app.models.aecs import SensorModel, LocationModel
 from app.models.database import session_dependency
-from app.core import cache
 
-router = APIRouter(prefix="/sensor",tags=["Sensor"])
+router = APIRouter(prefix="/sensors",tags=["Sensor"])
 
 @router.post('/create')
 async def create_sensor(
@@ -47,7 +46,7 @@ async def create_sensor(
         await session.commit()
         await session.refresh(sensor)
 
-        return {"message": "Sensor created successfully", "sensor" : await utils.get_sensor_by_id(session, sensor.id)}
+        return await utils.get_sensor_by_id(session, sensor.id)
     
     except IntegrityError as e:
 
@@ -225,3 +224,18 @@ async def get_locations(
 ):
     locations = await utils.get_locations(session)
     return locations
+
+@router.get('/link/{location_id}')
+async def get_sensors_link(
+    session: session_dependency,
+    location_id: int,
+):
+    return await utils.get_sensors_link(session, location_id)
+
+@router.post('/links/create/')
+async def link(
+    session: session_dependency,
+    sensor_id: int,
+    location_id: int,
+):
+    return await utils.link_sensor(session, sensor_id, location_id)

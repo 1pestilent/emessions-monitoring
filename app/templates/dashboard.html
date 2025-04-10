@@ -7,6 +7,11 @@
 {% block content %}
     <div style="display: flex; height: 89vh;">
         <div class="graphs">
+            <div class="dropdown">
+                <select id="sensor-select" class="dropdown-select">
+                    <option value="" disabled>Выберите датчик</option>
+                </select>
+            </div>
             <div class="graph">
                 <canvas id="myChart1" class="chart1"></canvas>
             </div>

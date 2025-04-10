@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.aecs.sensors.schemas import SensorViewListSchema, SensorViewSchema
 from app.models.aecs import (SensorModel, SensorReadingsModel, StatusModel,
-                             UnitModel, LocationModel)
+                             UnitModel, LocationModel, SensorMappingModel)
 from app.models.database import session_dependency, get_session
 
 sensor_query = (
@@ -187,3 +187,34 @@ async def get_locations(
         raise HTTPException(status.HTTP_404_NOT_FOUND)
     
     return locations
+
+async def get_sensors_link(
+        session: session_dependency,
+        location_id: int,
+):
+    result = await session.execute(
+        sensor_query
+        .join(SensorMappingModel, SensorMappingModel.sensor_id == SensorModel.id)
+        .where(SensorMappingModel.location_id == location_id)
+        )
+    sensors = result.all()
+
+    response = SensorViewListSchema(sensors=[sensor_to_schema(sensor) for sensor in sensors])
+
+    return response
+
+async def link_sensor(
+        session: session_dependency,
+        sensor_id: int,
+        location_id: int,
+        ):
+    try:
+        link = SensorMappingModel(
+            sensor_id = sensor_id,
+            location_id = location_id,
+        )
+        session.add(link)
+        await session.commit()
+        return status.HTTP_200_OK
+    except:
+        raise HTTPException(status)

@@ -78,6 +78,7 @@ header {
 
 .acc-bar {
     display: flex;
+    align-items: center;
 }
 
 .acc-menu {
@@ -120,7 +121,7 @@ header {
     font-family: 'PT Sans Bold';
 }
 
-.location-container:active {
+.location-container.active {
     background-color: #ca2f00;
 }
 
