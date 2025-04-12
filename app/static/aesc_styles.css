@@ -96,3 +96,16 @@ body {
     outline: none;
     border-color: var(--orange);
 }
+
+.nonContent {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    color: var(--grey);
+}
+
+.hidden {
+    display: none !important;
+}

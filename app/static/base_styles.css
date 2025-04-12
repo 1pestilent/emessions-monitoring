@@ -123,8 +123,10 @@ header {
 
 .location-container.active {
     background-color: #ca2f00;
+    font-family: 'PT Sans Bold';
 }
 
 .choosed {
     font-family: 'PT Sans Bold';
 }
+

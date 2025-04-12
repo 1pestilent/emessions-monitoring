@@ -65,6 +65,8 @@ document.addEventListener('DOMContentLoaded', async function(event) {
     const header_username = document.getElementById('username')
     const lower_header = document.getElementById('lower-header')
     const choose_sensors = document.getElementById('sensor-select')
+    const graph = document.getElementById('graph')
+    const non_content = document.getElementById('nonContent')
     header_username.textContent = payload.sub;
 
 
@@ -78,15 +80,14 @@ document.addEventListener('DOMContentLoaded', async function(event) {
                     ${location.name}
                 </a>`;
         locationDiv.dataset.LocationId = location.id;
-
         locationDiv.addEventListener('click', async () => {
             var currentLocation = locationDiv.dataset.LocationId;
+            non_content.innerHTML = 'Выберите нужные показания с датчика!';
             document.querySelectorAll('.location-container').forEach(container => {
                 container.classList.remove('active');
             });
-            
             locationDiv.classList.add('active');
-            choose_sensors.innerHTML = '<option value="" disabled> Выберите нужные показания: </option>';
+            choose_sensors.innerHTML = '<option value="" disabled selected> Выберите нужные показания: </option>';
 
             sensors_by_location = await get_sensors_link(currentLocation)
             sensors_by_location.sensors.forEach(sensor => {
