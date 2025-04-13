@@ -239,3 +239,10 @@ async def link(
     location_id: int,
 ):
     return await utils.link_sensor(session, sensor_id, location_id)
+
+@router.get('/{sensor_id}/readings/last')
+async def get_last_readings(
+    session: session_dependency,
+    sensor_id: int,
+):
+    return await utils.get_last_readings(session, sensor_id)

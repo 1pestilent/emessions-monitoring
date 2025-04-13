@@ -8,7 +8,7 @@
     <div style="display: flex; height: 89vh;">
         <div class="graphs">
             <div class="dropdown">
-                <select id="sensor-select" class="dropdown-select">
+                <select id="sensor-select" class="dropdown-select hidden">
                     <option value="" disabled>Выберите датчик</option>
                 </select>
             </div>
@@ -23,19 +23,19 @@
             <div class="params">
                 <div class="param">
                     <p class="units">Температура</p>
-                    <div class="unit-value"><p>15</p></div>
+                    <div class="unit-value"><p id="temperature">15</p></div>
                 </div>
                 <div class="param">
-                    <p class="units">Температура</p>
-                    <div class="unit-value"><p>15</p></div>
+                    <p class="units">Скорость ветра</p>
+                    <div class="unit-value"><p>15</p id="wind"></div>
                 </div>
                 <div class="param">
-                    <p class="units">Температура</p>
-                    <div class="unit-value"><p>15</p></div>
+                    <p class="units">Влажность</p>
+                    <div class="unit-value"><p id="humidity">15</p></div>
                 </div>
                 <div class="param">
-                    <p class="units">Температура</p>
-                    <div class="unit-value"><p>15</p></div>
+                    <p class="units">Давление</p>
+                    <div class="unit-value"><p id="pressure">15</p></div>
                 </div>
             </div>
         </div>

@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from fastapi import HTTPException, status
-from sqlalchemy import asc, func, select
+from sqlalchemy import asc, func, select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.aecs.sensors.schemas import SensorViewListSchema, SensorViewSchema
@@ -218,3 +218,18 @@ async def link_sensor(
         return status.HTTP_200_OK
     except:
         raise HTTPException(status)
+
+async def get_last_readings(
+        session: session_dependency,
+        sensor_id: int,
+):
+    result = await session.execute(
+        select(SensorReadingsModel, UnitModel.symbol)
+        .where(SensorReadingsModel.sensor_id == sensor_id)
+        .join(SensorModel, SensorModel.id == SensorReadingsModel.sensor_id)
+        .join(UnitModel, UnitModel.id == SensorModel.unit_id)
+        .order_by(desc(SensorReadingsModel.id))
+        .limit(1)
+        )
+    response = result.mappings().first()
+    return response
