@@ -3,9 +3,10 @@ const access_token = getCookie('access_token');
 const payload = JSON.parse(atob(access_token.split('.')[1]));
 const header_username = document.getElementById('username')
 const lower_header = document.getElementById('lower-header')
-
 const graph = document.getElementById('graph')
 const non_content = document.getElementById('nonContent')
+
+let update_interval = null
 
 function myFunction() {
     document.getElementById("dropdown-contentlist").classList.add("show");
@@ -50,13 +51,35 @@ async function fetch_last_reading(sensor_id) {
 }
 
 async function update_params() {
-    let temp_data = await fetch_last_reading(1)
-    let temp_value = document.getElementById('temperature')
+    const temp_value = document.getElementById('temperature');
+    const wind_value = document.getElementById('windpull');
+    const humidity_value = document.getElementById('humidity');
+    const pressure_value = document.getElementById('pressure');
 
+    let [temp_data, wind_data, humidity_data, pressure_data] = await Promise.all([
+        fetch_last_reading(1),
+        fetch_last_reading(2),
+        fetch_last_reading(3),
+        fetch_last_reading(4)
+    ]);
+
+    wind_value.innerHTML = `${wind_data.SensorReadingsModel.value} ${wind_data.symbol}`;
     temp_value.innerHTML = `${temp_data.SensorReadingsModel.value} ${temp_data.symbol}`;
-    update_interval = setInterval(update_params, 5000)
+    humidity_value.innerHTML = `${humidity_data.SensorReadingsModel.value} ${humidity_data.symbol}`;
+    pressure_value.innerHTML = `${Math.round(pressure_data.SensorReadingsModel.value*133/1000)} k${pressure_data.symbol}`;
     console.log('Параметры обновлены!')
 };
+
+function startUpdating() {
+    if (update_interval) {
+        clearInterval(update_interval);
+    }
+
+    update_params();
+    
+    update_interval = setInterval(update_params, 5000);
+}
+
 
 async function get_sensors_link (location_id) {
     let response = await fetch(`/api/aecs/sensors/link/${location_id}`, {
@@ -95,8 +118,7 @@ document.addEventListener("click", function(event) {
 document.addEventListener('DOMContentLoaded', async function(event) {
     header_username.textContent = payload.sub;
     var locations = await get_locations()
-    await fetch_last_reading(1)
-    await update_params()
+    startUpdating()
     locations.forEach(location => {
         var locationDiv = document.createElement('div');
         locationDiv.className = 'location-container';
