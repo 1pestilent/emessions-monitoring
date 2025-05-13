@@ -77,7 +77,7 @@ function startUpdating() {
 
     update_params();
     
-    update_interval = setInterval(update_params, 5000);
+    update_interval = setInterval(update_params, 60000);
 }
 
 
@@ -94,14 +94,6 @@ async function get_sensors_link (location_id) {
         console.log(sensors_by_location);
         return sensors_by_location;
 }};
-
-document.getElementById('sensor-select').addEventListener('change', function(e) {
-    const selectedSensor = e.target.value;
-    if (selectedSensor) {
-        graph.classList.remove('hidden')
-        non_content.classList.add('hidden')
-    }
-});
 
 document.addEventListener("click", function(event) {
     const dropdown = document.getElementById("dropdown");
@@ -140,7 +132,8 @@ document.addEventListener('DOMContentLoaded', async function(event) {
             choose_sensors.innerHTML = '<option value="" disabled selected> Выберите нужные показания: </option>';
 
             sensors_by_location = await get_sensors_link(currentLocation)
-            sensors_by_location.sensors.forEach(sensor => {
+            const sensors = sensors_by_location.sensors
+            sensors.forEach(sensor => {
             let sensorOption = new Option(
                 `${sensor.name} - ${sensor.serial_number}`,
                 sensor.id
