@@ -38,6 +38,28 @@
                     <div class="unit-value"><p id="pressure">15</p></div>
                 </div>
             </div>
+            <div class="time-period-buttons">
+                <button id="today-btn" class="period-btn btn">За сегодня</button>
+                <button id="week-btn" class="period-btn btn">За неделю</button>
+                <button id="month-btn" class="period-btn btn">За месяц</button>
+            </div>
+        <!-- Custom date range selection -->
+            <div class="date-range-selector">
+                <div class="date-range-title">Выберите период:</div>
+                <div class="date-zone">
+                    <div class="date-inputs">
+                        <div class="date-input">
+                            <label for="start-date">От:</label>
+                            <input type="date" id="start-date" class="date-picker">
+                        </div>
+                        <div class="date-input">
+                            <label for="end-date">До:</label>
+                            <input type="date" id="end-date" class="date-picker">
+                        </div>
+                    </div>
+                    <button id="apply-date-range" class="apply-btn btn">ОК</button>
+                </div>
+            </div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

@@ -40,6 +40,7 @@ body {
     width: 40%;
     margin: 1%;
     border-radius: 15px;
+    flex-direction: column;
 }
 
 .params {
@@ -108,4 +109,57 @@ body {
 
 .hidden {
     display: none !important;
+}
+
+.time-period-buttons {
+    display: flex;
+    height: 7vh;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 10%;
+    padding-right: 10%;
+
+}
+
+.btn {
+    color: white;
+    padding: 0px 15px;
+    background-color: var(--orange);
+    border-radius: 10px;
+    border: solid black 1px;
+}
+
+.btn:hover {
+       background-color: #fb3c02e5;
+}
+
+.btn:active {
+    background-color: #fb3c02c3;
+        border: solid black 2px;
+}
+
+.date-range-selector {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.date-zone {
+    display: flex;
+    flex-direction: row;
+}
+
+.date-inputs {
+    display: flex;
+    flex-direction: row;
+    margin: 5px;
+}
+
+.period-btn {
+    height: 70%;
+    width: 25%;
+}
+
+.date-range-selector {
+    padding: 10px;
 }
