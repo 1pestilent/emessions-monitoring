@@ -1,11 +1,15 @@
 FROM python:3.13.1-slim
 
-WORKDIR /app
+RUN pip install poetry
 
-COPY reqs.txt .
+WORKDIR /app .
 
-RUN pip install -r reqs.txt
+COPY pyproject.toml poetry.lock ./
 
-COPY app/ .
+RUN poetry config virtualenvs.create false \ 
+    && poetry install
+
+COPY . .
 
 CMD ["python", "app.main.py"]
+
